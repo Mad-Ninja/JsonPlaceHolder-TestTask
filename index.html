@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Main page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Posts</h1>
+    </header>
+    <main>
+        <div class="search-field">
+            <input autocomplete="off" type="search" id="search" placeholder="Search..." />
+        </div>
+        <div class="posts-container">
+            <ul id="posts"></ul>
+        </div>
+        <div class="pagination-wrapper">
+            <div class="pagination-container">
+                <button id="btn_prev"><i class="gg-arrow-left"></i></button>
+                <span id="page_number" class="outline-none"></span>
+                <button id="btn_next"><i class="gg-arrow-right"></i></button>
+            </div>
+        </div>
+    </main>
+    <script src="./js/script.js"></script>
+</body>
+
+</html>

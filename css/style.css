@@ -1,0 +1,73 @@
+@import url('https://css.gg/arrow-left.css');
+@import url('https://css.gg/arrow-right.css');
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  max-width: 767px;
+  margin: 20px auto;
+}
+
+ul {
+  list-style-type: none !important;
+}
+
+.post-container {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color: whitesmoke;
+  margin: 20px 0px;
+}
+
+.post-title {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.post-body {
+  margin-left: 20px;
+}
+.pagination-wrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  bottom: 2em;
+}
+.pagination-container{
+  
+  display: flex;
+  align-items: center;
+  background-color: #FFF;
+}
+.pagination-container button{
+  background-color:rgb(198, 227, 243);
+  cursor: pointer;
+  border: none;
+  padding: 3px;
+}
+.clickPageNumber {
+  background-color: lightgrey;
+  padding: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.disable {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.search-field input {
+  margin-top: 10px;
+  height: 40px;
+  font-size: 25px;
+  padding: 10px;
+  border: 2px solid #000;
+  border-radius: 10px;
+}
