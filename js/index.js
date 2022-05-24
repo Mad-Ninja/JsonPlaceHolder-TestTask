@@ -4,20 +4,18 @@ const search = document.getElementById("search");
 const postListContainer = document.querySelector(".posts-container");
 const postList = document.getElementById("posts");
 
-let dataFetch = fetchPosts();
+let dataFetch = getPosts();
+let search_term = "";
 
-
-async function fetchPosts() {
+async function getPosts() {
   try {
     const postRes = await fetch(`${URL}posts`);
-    dataFetch = await postRes.json();
-    if (postRes.status != 200) {
-      document.querySelector('.search-field').style.display = 'none';
-      document.querySelector('.pagination-wrapper').style.display = 'none';
-      postListContainer.innerHTML = 'No data';
+    if (postRes.status === 200) {
+      dataFetch = await postRes.json();
+      displayPosts();
+    } else {
+      throw new Error(postRes.status);
     }
-    displayPosts();
-
   } catch (error) {
     console.log(error);
     document.querySelector('.search-field').style.display = 'none';
@@ -26,12 +24,77 @@ async function fetchPosts() {
   }
 }
 
+async function deletePost(id) {
+  if (confirm('Delete this post?')) {
+    try {
+      const deletePostRes = await fetch(`${URL}posts/${id}`, {
+        method: 'DELETE',
+      })
+      if (deletePostRes.status === 200) {
+        let post = dataFetch.find(item => item.id === id);
+        let index = dataFetch.indexOf(post)
+        dataFetch.splice(index, 1);
+        displayPosts();
+        console.log(`Post ${id} deleted`)
+      } else {
+        throw new Error(deletePostRes.status);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    return;
+  }
+}
+
+async function addPost(title, text) {
+  try {
+    const createPostRes = await fetch(`${URL}posts`, {
+      method: 'POST',
+      body: JSON.stringify({
+        title: title,
+        body: text,
+        userId: 1,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    if (createPostRes.status === 201) {
+      const post = await createPostRes.json();
+      dataFetch.push(post);
+      displayPosts();
+      console.log(`Post succesfully created`)
+    } else {
+      throw new Error(deletePostRes.status);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getComments(id) {
+  try {
+    const commentsRes = await fetch(`${URL}posts/${id}/comments`)
+    if (commentsRes.status === 200) {
+      const comments = await commentsRes.json();
+      return comments;
+    } else {
+      throw new Error(commentsRes.status);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function displayPosts() {
+
   let data = dataFetch;
 
   const prevButton = document.getElementById('btn_prev');
   const nextButton = document.getElementById('btn_next');
+
   prevButton.addEventListener('click', prevPage);
   nextButton.addEventListener('click', nextPage);
 
@@ -95,18 +158,19 @@ function displayPosts() {
     postList.innerHTML = "";
 
     for (let i = (page - 1) * records_per_page; i < (page * records_per_page) && i < data.length; i++) {
-      postList.innerHTML += renderPost(data[i]);
+      postList.innerHTML += renderPosts(data[i]);
     }
 
     changeButtonStatus();
     selectPageNumber();
   }
 
-  let search_term = "";
-  search.addEventListener("input", (event) => {
+  function setSerchTerm(event) {
     search_term = event.target.value.toLowerCase();
     searchPost();
-  });
+  }
+  search.addEventListener("input", setSerchTerm);
+
 
   function searchPost() {
     postList.innerHTML = "";
@@ -116,7 +180,7 @@ function displayPosts() {
         item.body.toLowerCase().includes(search_term)
       );
     })
-    console.log(data)
+
     if (data.length === 0) {
       document.querySelector('.pagination-wrapper').style.display = 'none';
       postList.innerHTML = `<li>No result</li>`
@@ -129,15 +193,14 @@ function displayPosts() {
 
   }
 
-
   changePage(1);
   setPageNumbers();
   clickPageNumber();
   selectPageNumber();
-
+  searchPost();
 }
 
-function renderPost(post) {
+function renderPosts(post) {
   return `
      <li class="post-container" onclick="showSinglePost(${post.id})" data-id="${post.id}">
       <p class="post-title">
@@ -146,10 +209,51 @@ function renderPost(post) {
       <p class="post-body">
         ${post.body}
       </p>
+      <button class="delete-btn" onclick="event.stopPropagation(); deletePost(${post.id});">Delete</button>
      </li>
       `;
 }
 
-function showSinglePost(id) {}
+async function showSinglePost(id) {
+  const comments = await getComments(id);
+  if (comments != undefined) {
+    const post = dataFetch.find(item => item.id === id);
+    localStorage.setItem('post', JSON.stringify(post));
+    localStorage.setItem('comments', JSON.stringify(comments));
+    document.location.href = "post.html";
+  }else{
+    return;
+  }
 
-//displayPosts()
+}
+
+async function createPost() {
+  const popupBg = document.querySelector('.popup__bg');
+  const popup = document.querySelector('.popup');
+  const closePopupButton = document.querySelector('.close-popup');
+  const submitBtn = document.querySelector('.submit-form_btn');
+  const titleField = document.getElementById('title-value');
+  const textField = document.getElementById('text-value');
+
+  popupBg.classList.add('active');
+  popup.classList.add('active');
+
+  function closePopup() {
+    popupBg.classList.remove('active');
+    popup.classList.remove('active');
+    closePopupButton.removeEventListener('click', closePopup);
+    popupBg.removeEventListener('click', closePopup);
+    submitBtn.removeEventListener('click', submitPost);
+  }
+
+  function submitPost() {
+    closePopup();
+    addPost(titleField.value, textField.value)
+    titleField.value = '';
+    textField.value = '';
+  }
+
+  closePopupButton.addEventListener('click', closePopup);
+  popupBg.addEventListener('click', closePopup);
+  submitBtn.addEventListener('click', submitPost);
+}

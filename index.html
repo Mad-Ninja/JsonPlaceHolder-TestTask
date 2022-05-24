@@ -14,6 +14,7 @@
 <body>
     <header>
         <h1>Posts</h1>
+        <button class="add-post__btn" onclick="createPost()"><i class="math-plus"></i>Add new post</button>
     </header>
     <main>
         <div class="search-field">
@@ -29,8 +30,26 @@
                 <button id="btn_next"><i class="gg-arrow-right"></i></button>
             </div>
         </div>
+        <div class="popup__bg">
+            <form class="popup" action="#" onclick="event.stopPropagation()">
+                <svg class="close-popup" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#2982ff" d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+                <label>
+                    <input type="text" name="title" id="title-value">
+                    <div class="label__text">
+                        Enter title
+                    </div>
+                </label>
+                <label>
+                    <textarea name="message" id="text-value"></textarea>
+                    <div class="label__text">
+                        Enter text
+                    </div>
+                </label>
+                <button type="button" class="submit-form_btn">Create post</button>
+            </form>
+        </div>  
     </main>
-    <script src="./js/script.js"></script>
+    <script src="./js/index.js"></script>
 </body>
 
 </html>
